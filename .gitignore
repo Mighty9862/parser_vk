@@ -1,8 +1,46 @@
-.venv
-*.pyc
+# Файлы с учетными данными/токенами
+vk_token.txt
+chat_id.txt
+
+# Временные и промежуточные данные
+/temp/
+*.json
+
+# Результаты работы программы
 *.csv
+*.png
+*.gexf
+
+# Кэши и виртуальное окружение Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Редакторы и IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 *.txt
 *.json
-temp
-
-
+*.csv
+*.gexf
+*.gexf.gz
+*.gexf.xml
