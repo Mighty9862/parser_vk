@@ -1,0 +1,8 @@
+.venv
+*.pyc
+*.csv
+*.txt
+*.json
+temp
+
+
