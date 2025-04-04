@@ -293,7 +293,7 @@ def save_connections_csv(
     # Открываем файл для записи
     with open("vk_chat_connections.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["source_id", "target_id"])
+        writer.writerow(["Source", "Target"])
         
         # Для каждого пользователя проверяем его друзей среди участников беседы
         for user_id, friends_ids in friends_data.items():
@@ -332,8 +332,8 @@ def save_extended_connections(
     with open("vk_chat_connections_extended.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow([
-            "source_id", "source_first_name", "source_last_name", 
-            "target_id", "target_first_name", "target_last_name", 
+            "Source", "source_first_name", "source_last_name", 
+            "Target", "target_first_name", "target_last_name", 
             "relationship_type"
         ])
         
