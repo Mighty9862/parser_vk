@@ -504,6 +504,76 @@ def get_chat_id() -> int:
     return chat_id
 
 
+def save_gephi_nodes(users_data: List[Dict[str, Any]]) -> None:
+    """
+    Сохранение данных о пользователях в формате узлов для Gephi.
+    
+    Args:
+        users_data (List[Dict[str, Any]]): Данные о пользователях.
+        
+    Returns:
+        None
+    """
+    with open("nodes.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        # Заголовок с обязательным полем Id и дополнительными атрибутами
+        writer.writerow([
+            "Id", "Label", "First Name", "Last Name", "Sex", "Birth Date", 
+            "City", "Education", "Followers", "Occupation"
+        ])
+        
+        for user in users_data:
+            # Подготовка данных для записи
+            row = [
+                user.get('id', ''),  # Id - обязательное поле для Gephi
+                f"{user.get('first_name', '')} {user.get('last_name', '')}",  # Label - отображаемое имя
+                user.get('first_name', ''),
+                user.get('last_name', ''),
+                user.get('sex', ''),
+                user.get('bdate', ''),
+                user.get('city', {}).get('title', '') if 'city' in user else '',
+                user.get('university_name', '') or user.get('education', ''),
+                user.get('followers_count', ''),
+                user.get('occupation', {}).get('name', '') if 'occupation' in user else ''
+            ]
+            writer.writerow(row)
+    
+    print("Данные узлов для Gephi сохранены в файл nodes.csv")
+
+
+def save_gephi_edges(users_data: List[Dict[str, Any]], friends_data: Dict[int, List[int]]) -> None:
+    """
+    Сохранение данных о связях в формате ребер для Gephi.
+    
+    Args:
+        users_data (List[Dict[str, Any]]): Данные о пользователях.
+        friends_data (Dict[int, List[int]]): Словарь со списками друзей.
+        
+    Returns:
+        None
+    """
+    # Создаем множество для быстрого доступа к ID пользователей беседы
+    chat_users_ids: Set[int] = {user['id'] for user in users_data}
+    
+    # Открываем файл для записи
+    with open("edges.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        # Заголовок с обязательными полями Source и Target
+        writer.writerow(["Source", "Target", "Type", "Weight"])
+        
+        # Для каждого пользователя проверяем его друзей среди участников беседы
+        for user_id, friends_ids in friends_data.items():
+            # Находим пересечение между друзьями пользователя и участниками беседы
+            friends_in_chat = set(friends_ids) & chat_users_ids
+            
+            # Записываем каждую связь (только в одну сторону)
+            for friend_id in friends_in_chat:
+                if user_id < friend_id:  # записываем каждую связь только один раз
+                    writer.writerow([user_id, friend_id, "Undirected", 1])
+    
+    print("Данные ребер для Gephi сохранены в файл edges.csv")
+
+
 def main() -> None:
     """
     Основная функция программы.
@@ -541,6 +611,10 @@ def main() -> None:
     save_connections_csv(users_data, friends_data)
     save_extended_connections(users_data, friends_data)
     save_connections_stats(users_data, friends_data)
+    
+    # Сохранение данных для Gephi
+    save_gephi_nodes(users_data)
+    save_gephi_edges(users_data, friends_data)
     
     print("Готово! Все данные сохранены.")
 
